@@ -29,9 +29,19 @@ make
 ./tplt
 ```
 
+## Project Structure
+
+The project is organized into multiple files:
+
+- **src/heatmap_builder.hpp**: Core data processing and heatmap generation
+- **src/heatmap_renderer.hpp**: Terminal rendering and visualization
+- **src/main.cpp**: Example usage
+
 ## Usage
 
 ```cpp
+#include "heatmap_builder.hpp"
+#include "heatmap_renderer.hpp"
 #include <vector>
 #include <tuple>
 

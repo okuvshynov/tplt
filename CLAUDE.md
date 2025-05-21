@@ -30,7 +30,23 @@ make
 
 ## Code Architecture
 
-The project consists of several core components:
+The project is organized into multiple files:
+
+1. **src/heatmap_builder.hpp**
+   - Contains the `Numeric` concept for type constraints
+   - Implements the `map_range` function for value mapping
+   - Defines the `AggregateFunc` enum for aggregation methods
+   - Provides `build_heatmap_data` template functions for generating heatmaps from 2D and 3D points
+
+2. **src/heatmap_renderer.hpp**
+   - Defines the `INTENSITY_CHARS` for visual representation
+   - Implements the `get_intensity_char` function for intensity mapping
+   - Provides the `render_heatmap` template function for visualization
+
+3. **src/main.cpp**
+   - Contains example usage of the library components
+
+## Core Components
 
 1. **Numeric Type Concept** - Uses C++20 concepts to ensure template functions work with numeric types
 2. **Data Processing Functions**:
@@ -44,6 +60,7 @@ The project consists of several core components:
 ## Extending the Project
 
 When adding new features:
-1. For new aggregation functions, extend the `AggregateFunc` enum
-2. For new visualization styles, modify the `INTENSITY_CHARS` vector
-3. For additional data processing capabilities, implement them as template functions
+1. For new aggregation functions, extend the `AggregateFunc` enum in `heatmap_builder.hpp`
+2. For new visualization styles, modify the `INTENSITY_CHARS` vector in `heatmap_renderer.hpp`
+3. For additional data processing capabilities, implement them as template functions in the appropriate header file
+4. Remember to update the `CMakeLists.txt` file if you add new source or header files
