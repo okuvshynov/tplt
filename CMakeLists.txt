@@ -9,6 +9,8 @@ set(HEADERS
     src/heatmap_builder.hpp
     src/heatmap_renderer.hpp
     src/test_framework.hpp
+    src/arg_parser.hpp
+    src/data_reader.hpp
 )
 
 # Add source files for main executable

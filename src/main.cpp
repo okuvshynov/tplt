@@ -4,75 +4,102 @@
 #include <tuple>
 #include "heatmap_builder.hpp"
 #include "heatmap_renderer.hpp"
+#include "arg_parser.hpp"
+#include "data_reader.hpp"
 
-// Example usage
-int main() {
-    // Example 1: Simple gradient
-    std::vector<std::vector<double>> example1 = {
-        {0.0, 0.2, 0.4, 0.6, 0.8, 1.0},
-        {0.1, 0.3, 0.5, 0.7, 0.9, 1.0},
-        {0.2, 0.4, 0.6, 0.8, 1.0, 0.8},
-        {0.3, 0.5, 0.7, 0.9, 0.7, 0.5},
-        {0.4, 0.6, 0.8, 0.6, 0.4, 0.2},
-        {0.5, 0.7, 0.5, 0.3, 0.1, 0.0}
-    };
+using namespace tplt;
 
-    std::cout << "Example 1: Simple gradient\n";
-    render_heatmap(example1, true);
+// Convert DataPoint vector to the format needed by build_heatmap_data
+template<typename T>
+std::vector<std::tuple<T, T>> convert_to_2d_points(const std::vector<DataPoint<T>>& data_points) {
+    std::vector<std::tuple<T, T>> points;
     
-    // Example 2: Random-like pattern with integers
-    std::vector<std::vector<int>> example2 = {
-        {5, 10, 15, 20, 25, 30, 35, 40},
-        {40, 35, 30, 25, 20, 15, 10, 5},
-        {10, 20, 30, 40, 35, 25, 15, 5},
-        {5, 15, 25, 35, 40, 30, 20, 10},
-        {20, 10, 5, 15, 25, 35, 40, 30},
-        {30, 40, 35, 25, 15, 5, 10, 20}
-    };
+    for (const auto& point : data_points) {
+        points.emplace_back(point.x, point.y);
+    }
     
-    std::cout << "\nExample 2: Random-like pattern\n";
-    render_heatmap(example2, true);
+    return points;
+}
 
-    // Example 3: Build heatmap from 2D points (x,y)
-    std::vector<std::tuple<double, double>> points_2d = {
-        {0.1, 0.2}, {0.3, 0.4}, {0.5, 0.6}, {0.7, 0.8}, {0.9, 1.0},
-        {0.2, 0.3}, {0.4, 0.5}, {0.6, 0.7}, {0.8, 0.9}, {1.0, 0.1},
-        {0.3, 0.4}, {0.5, 0.6}, {0.7, 0.8}, {0.9, 0.1}, {0.1, 0.2},
-        {0.4, 0.5}, {0.6, 0.7}, {0.8, 0.9}, {0.1, 0.1}, {0.2, 0.3},
-        // Add points clustered in a specific area to create a hotspot
-        {0.2, 0.2}, {0.21, 0.21}, {0.22, 0.22}, {0.23, 0.23}, {0.24, 0.24},
-        {0.25, 0.25}, {0.26, 0.26}, {0.27, 0.27}, {0.28, 0.28}, {0.29, 0.29}
-    };
+// Convert DataPoint vector to the format needed by build_heatmap_data for 3D points
+template<typename T>
+std::vector<std::tuple<T, T, T>> convert_to_3d_points(const std::vector<DataPoint<T>>& data_points) {
+    std::vector<std::tuple<T, T, T>> points;
     
-    // Create a 15x15 heatmap from 2D points
-    auto heatmap_2d = build_heatmap_data(points_2d, 15, 15);
+    for (const auto& point : data_points) {
+        if (point.value.has_value()) {
+            points.emplace_back(point.x, point.y, point.value.value());
+        } else {
+            // If value is not provided, use 1.0 as default (for count)
+            points.emplace_back(point.x, point.y, static_cast<T>(1.0));
+        }
+    }
     
-    std::cout << "\nExample 3: Heatmap from 2D points (count)\n";
-    render_heatmap(heatmap_2d, true);
-    
-    // Example 4: Build heatmap from 3D points (x,y,v) with sum aggregation
-    std::vector<std::tuple<double, double, double>> points_3d = {
-        {0.1, 0.2, 5.0}, {0.3, 0.4, 2.5}, {0.5, 0.6, 7.8}, {0.7, 0.8, 1.2}, {0.9, 1.0, 3.4},
-        {0.2, 0.3, 6.7}, {0.4, 0.5, 8.9}, {0.6, 0.7, 2.3}, {0.8, 0.9, 4.5}, {1.0, 0.1, 6.7},
-        {0.3, 0.4, 8.9}, {0.5, 0.6, 1.2}, {0.7, 0.8, 3.4}, {0.9, 0.1, 5.6}, {0.1, 0.2, 7.8},
-        {0.4, 0.5, 9.0}, {0.6, 0.7, 2.1}, {0.8, 0.9, 4.3}, {0.1, 0.1, 6.5}, {0.2, 0.3, 8.7},
-        // Add points clustered in a specific area with high values
-        {0.2, 0.2, 10.0}, {0.21, 0.21, 15.0}, {0.22, 0.22, 20.0}, {0.23, 0.23, 25.0}, {0.24, 0.24, 30.0}
-    };
-    
-    // Create heatmaps with different aggregation functions
-    auto heatmap_sum = build_heatmap_data(points_3d, AggregateFunc::Sum, 12, 12);
-    auto heatmap_avg = build_heatmap_data(points_3d, AggregateFunc::Avg, 12, 12);
-    auto heatmap_count = build_heatmap_data(points_3d, AggregateFunc::Count, 12, 12);
-    
-    std::cout << "\nExample 4a: Heatmap from 3D points (sum)\n";
-    render_heatmap(heatmap_sum, true);
-    
-    std::cout << "\nExample 4b: Heatmap from 3D points (average)\n";
-    render_heatmap(heatmap_avg, true);
-    
-    std::cout << "\nExample 4c: Heatmap from 3D points (count)\n";
-    render_heatmap(heatmap_count, true);
+    return points;
+}
 
+// Main function
+int main(int argc, char* argv[]) {
+    try {
+        // Parse command-line arguments
+        Options options = Options::parse(argc, argv);
+        
+        // Read data from stdin
+        DataReader reader(options.delimiter);
+        auto data_points = reader.read_data<double>(options);
+        
+        if (data_points.empty()) {
+            std::cerr << "No valid data points were read." << std::endl;
+            return 1;
+        }
+
+        // Process data based on command
+        if (options.command == CommandType::Heatmap) {
+            // Default heatmap dimensions
+            const int width = 20;
+            const int height = 10;
+
+            // Check if we need aggregation
+            if (options.aggregation.function == AggregationSpec::Function::Count && 
+                !options.aggregation.field.has_value()) {
+                // Simple 2D heatmap with count aggregation
+                auto points_2d = convert_to_2d_points(data_points);
+                auto heatmap = build_heatmap_data(points_2d, width, height);
+                render_heatmap(heatmap, true);
+            } else {
+                // 3D heatmap with aggregation
+                auto points_3d = convert_to_3d_points(data_points);
+                
+                // Map aggregation function
+                AggregateFunc agg_func = AggregateFunc::Count;
+                switch (options.aggregation.function) {
+                    case AggregationSpec::Function::Sum:
+                        agg_func = AggregateFunc::Sum;
+                        break;
+                    case AggregationSpec::Function::Avg:
+                        agg_func = AggregateFunc::Avg;
+                        break;
+                    default:
+                        agg_func = AggregateFunc::Count;
+                        break;
+                }
+                
+                auto heatmap = build_heatmap_data(points_3d, agg_func, width, height);
+                render_heatmap(heatmap, true);
+            }
+        } else {
+            std::cerr << "Unsupported command." << std::endl;
+            return 1;
+        }
+        
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        std::cerr << "Usage: tplt [options] command [fields]" << std::endl;
+        std::cerr << "Example: cat data.txt | tplt -d',' heatmap f1 f2" << std::endl;
+        std::cerr << "Example: cat data.txt | tplt heatmap f2 f4" << std::endl;
+        std::cerr << "Example: cat data.txt | tplt -d'|' heatmap f3 f5 avg(f7)" << std::endl;
+        return 1;
+    }
+    
     return 0;
 }

@@ -1,9 +1,10 @@
 # tplt
 
-A C++ template library for generating terminal heatmaps.
+A C++ template library for generating terminal heatmaps from stdin data.
 
 ## Features
 
+- Read data from stdin with configurable delimiters
 - Generate heatmaps from 2D points (x,y) or 3D points (x,y,value)
 - Multiple aggregation functions: Sum, Average, Count
 - Render heatmaps using Unicode block characters with different intensity levels
@@ -30,6 +31,40 @@ make
 ./tplt
 ```
 
+## Usage
+
+```bash
+# Basic usage: read data from stdin and generate a heatmap
+cat data.txt | ./tplt heatmap
+
+# Specify a delimiter (comma in this case)
+cat data.txt | ./tplt -d',' heatmap f1 f2
+
+# Select specific columns (2nd and 4th)
+cat data.txt | ./tplt heatmap f2 f4
+
+# Use aggregation function (average of 7th column)
+cat data.txt | ./tplt -d'|' heatmap f3 f5 'avg(f7)'
+```
+
+### Data Format
+
+The input data should be provided line by line from stdin, with each line representing a data point. For example:
+
+```
+1.2 3.4
+2.5 5.6
+3.7 7.8
+```
+
+With a custom delimiter:
+
+```
+1.2,3.4,10.0
+2.5,5.6,20.0
+3.7,7.8,30.0
+```
+
 ## Testing
 
 ```bash
@@ -49,40 +84,11 @@ The project is organized into multiple files:
 
 - **src/heatmap_builder.hpp**: Core data processing and heatmap generation
 - **src/heatmap_renderer.hpp**: Terminal rendering and visualization
-- **src/main.cpp**: Example usage
+- **src/arg_parser.hpp**: Command-line argument parsing
+- **src/data_reader.hpp**: Data reading from stdin with column selection
+- **src/main.cpp**: Example usage and CLI interface
 - **src/test_framework.hpp**: Minimal unit testing framework
 - **src/heatmap_builder_test.cpp**: Tests for heatmap builder functionality
-
-## Usage
-
-```cpp
-#include "heatmap_builder.hpp"
-#include "heatmap_renderer.hpp"
-#include <vector>
-#include <tuple>
-
-// Example 1: Render a pre-defined heatmap
-std::vector<std::vector<double>> data = {
-    {0.0, 0.2, 0.4, 0.6, 0.8, 1.0},
-    {0.1, 0.3, 0.5, 0.7, 0.9, 1.0},
-    {0.2, 0.4, 0.6, 0.8, 1.0, 0.8}
-};
-render_heatmap(data, true);  // true enables legend
-
-// Example 2: Generate a heatmap from 2D points
-std::vector<std::tuple<double, double>> points_2d = {
-    {0.1, 0.2}, {0.3, 0.4}, {0.5, 0.6}
-};
-auto heatmap = build_heatmap_data(points_2d, 10, 10);  // width=10, height=10
-render_heatmap(heatmap);
-
-// Example 3: Generate a heatmap from 3D points with aggregation
-std::vector<std::tuple<double, double, double>> points_3d = {
-    {0.1, 0.2, 5.0}, {0.3, 0.4, 2.5}, {0.5, 0.6, 7.8}
-};
-auto heatmap_sum = build_heatmap_data(points_3d, AggregateFunc::Sum, 12, 12);
-render_heatmap(heatmap_sum);
-```
 
 ## License
 
