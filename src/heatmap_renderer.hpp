@@ -62,7 +62,7 @@ void render_heatmap(const std::vector<std::vector<T>>& data, bool show_legend = 
             T mnd = map_range(mn, 0.0, 1.0, min_val, max_val);
             T mxd = map_range(mx, 0.0, 1.0, min_val, max_val);
             
-            std::cout << INTENSITY_CHARS[i] << " [" << mn << "; " << mx << ")" << std::endl;
+            std::cout << INTENSITY_CHARS[i] << " [" << mnd << "; " << mxd << ")" << std::endl;
         }
     }
 }

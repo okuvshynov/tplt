@@ -47,6 +47,29 @@ cat data.txt | ./tplt heatmap f2 f4
 cat data.txt | ./tplt -d'|' heatmap f3 f5 'avg(f7)'
 ```
 
+### Example run
+
+```
+% cat test_data/clustered_data_1k.csv | ./build/tplt -d',' heatmap f3 f4
+░▓▓▒▒
+▒▓█▓▓
+ ░░░
+
+
+
+              ░░░░░
+              ▓▓█▓░
+              ▒▓▒▒░
+
+
+Legend:
+  [0; 22)
+░ [22; 44)
+▒ [44; 67)
+▓ [67; 89)
+█ [89; 112)
+```
+
 ### Data Format
 
 The input data should be provided line by line from stdin, with each line representing a data point. For example:
