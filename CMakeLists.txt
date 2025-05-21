@@ -8,15 +8,27 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(HEADERS
     src/heatmap_builder.hpp
     src/heatmap_renderer.hpp
+    src/test_framework.hpp
 )
 
-# Add source files
+# Add source files for main executable
 set(SOURCES
     src/main.cpp
 )
 
-# Create the executable
+# Create the main executable
 add_executable(tplt ${SOURCES} ${HEADERS})
 
 # Set include directories
 target_include_directories(tplt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+# Add test executable
+add_executable(heatmap_builder_test src/heatmap_builder_test.cpp ${HEADERS})
+target_include_directories(heatmap_builder_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+# Add custom target to run all tests
+add_custom_target(test 
+    COMMAND heatmap_builder_test
+    DEPENDS heatmap_builder_test
+    COMMENT "Running tests..."
+)

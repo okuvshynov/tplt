@@ -28,6 +28,23 @@ make
 ./tplt
 ```
 
+## Running Tests
+
+The project includes a minimal testing framework and tests for the heatmap builder:
+
+```bash
+# Build the tests
+cd build
+cmake ..
+make
+
+# Run all tests
+make test
+
+# Or run a specific test executable directly
+./heatmap_builder_test
+```
+
 ## Code Architecture
 
 The project is organized into multiple files:
@@ -46,6 +63,14 @@ The project is organized into multiple files:
 3. **src/main.cpp**
    - Contains example usage of the library components
 
+4. **src/test_framework.hpp**
+   - A minimal unit testing framework
+   - Provides TestSuite and TestCase classes
+   - Includes assertion functions for writing tests
+
+5. **src/heatmap_builder_test.cpp**
+   - Unit tests for the heatmap builder functionality
+
 ## Core Components
 
 1. **Numeric Type Concept** - Uses C++20 concepts to ensure template functions work with numeric types
@@ -56,6 +81,8 @@ The project is organized into multiple files:
    - `build_heatmap_data` - Constructs heatmaps from 2D or 3D points with optional aggregation
 4. **Rendering**:
    - `render_heatmap` - Displays heatmaps in the terminal with optional legend
+5. **Testing**:
+   - Simple test framework with TestSuite and assertion functions
 
 ## Extending the Project
 
@@ -63,4 +90,5 @@ When adding new features:
 1. For new aggregation functions, extend the `AggregateFunc` enum in `heatmap_builder.hpp`
 2. For new visualization styles, modify the `INTENSITY_CHARS` vector in `heatmap_renderer.hpp`
 3. For additional data processing capabilities, implement them as template functions in the appropriate header file
-4. Remember to update the `CMakeLists.txt` file if you add new source or header files
+4. When adding new functionality, always add corresponding unit tests
+5. Remember to update the `CMakeLists.txt` file if you add new source or header files

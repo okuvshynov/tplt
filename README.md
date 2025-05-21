@@ -8,6 +8,7 @@ A C++ template library for generating terminal heatmaps.
 - Multiple aggregation functions: Sum, Average, Count
 - Render heatmaps using Unicode block characters with different intensity levels
 - Show optional legends to interpret the visualization
+- Includes a minimal testing framework
 
 ## Requirements
 
@@ -29,6 +30,19 @@ make
 ./tplt
 ```
 
+## Testing
+
+```bash
+# Build and run tests
+cd build
+cmake ..
+make
+make test
+
+# Or run specific test executable directly
+./heatmap_builder_test
+```
+
 ## Project Structure
 
 The project is organized into multiple files:
@@ -36,6 +50,8 @@ The project is organized into multiple files:
 - **src/heatmap_builder.hpp**: Core data processing and heatmap generation
 - **src/heatmap_renderer.hpp**: Terminal rendering and visualization
 - **src/main.cpp**: Example usage
+- **src/test_framework.hpp**: Minimal unit testing framework
+- **src/heatmap_builder_test.cpp**: Tests for heatmap builder functionality
 
 ## Usage
 
