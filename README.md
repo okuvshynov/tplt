@@ -5,6 +5,7 @@ A C++ template library for generating terminal heatmaps from stdin data.
 ## Features
 
 - Read data from stdin with configurable delimiters
+- CSV support with automatic header row detection (or explicit control)
 - Generate heatmaps from 2D points (x,y) or 3D points (x,y,value)
 - Multiple aggregation functions: Sum, Average, Count
 - Render heatmaps using Unicode block characters with different intensity levels
@@ -45,6 +46,15 @@ cat data.txt | ./tplt heatmap f2 f4
 
 # Use aggregation function (average of 7th column)
 cat data.txt | ./tplt -d'|' heatmap f3 f5 'avg(f7)'
+
+# Use header column names (with auto-detection)
+cat data.csv | ./tplt -d',' heatmap x_position y_position 'avg(intensity)'
+
+# Force using header row
+cat data.csv | ./tplt -d',' -header heatmap x_position y_position 'avg(intensity)'
+
+# Force ignore header row
+cat data.csv | ./tplt -d',' -no-header heatmap f1 f2
 ```
 
 ### Example run
@@ -88,6 +98,21 @@ With a custom delimiter:
 3.7,7.8,30.0
 ```
 
+With a header row (automatically detected):
+
+```
+x_position,y_position,intensity,category
+1.0,1.0,10.0,A
+1.2,1.1,12.0,A
+1.1,1.3,11.0,A
+```
+
+The program will automatically detect if the first row is a header (if it contains non-numeric values) and allow you to reference columns by name instead of index. You can control header detection with the following options:
+
+- Auto-detection (default): The program will try to detect if the first row is a header
+- `-header`: Force the first row to be treated as a header
+- `-no-header`: Force the data to be treated as having no header
+
 ## Testing
 
 ```bash
@@ -99,6 +124,7 @@ make test
 
 # Or run specific test executable directly
 ./heatmap_builder_test
+./data_reader_test
 ```
 
 ## Project Structure
@@ -108,10 +134,11 @@ The project is organized into multiple files:
 - **src/heatmap_builder.hpp**: Core data processing and heatmap generation
 - **src/heatmap_renderer.hpp**: Terminal rendering and visualization
 - **src/arg_parser.hpp**: Command-line argument parsing
-- **src/data_reader.hpp**: Data reading from stdin with column selection
+- **src/data_reader.hpp**: Data reading from stdin with column selection and header detection
 - **src/main.cpp**: Example usage and CLI interface
 - **src/test_framework.hpp**: Minimal unit testing framework
 - **src/heatmap_builder_test.cpp**: Tests for heatmap builder functionality
+- **src/data_reader_test.cpp**: Tests for header detection and field name lookup
 
 ## License
 

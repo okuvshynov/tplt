@@ -37,6 +37,7 @@ struct FieldSpec {
             is_index = true;
             index = std::stoi(match[1].str());
         }
+        // Otherwise, keep it as a field name for lookup in header row
     }
 };
 
@@ -94,6 +95,14 @@ struct Options {
     FieldSpec y_field;
     AggregationSpec aggregation;
     
+    enum class HeaderMode {
+        Auto,       // Automatically detect header (default)
+        ForceOn,    // Force header row to be used
+        ForceOff    // Force no header row
+    };
+    
+    HeaderMode header_mode = HeaderMode::Auto;
+    
     // Parse command line arguments
     static Options parse(int argc, char* argv[]) {
         Options opts;
@@ -120,6 +129,10 @@ struct Options {
                 } else {
                     throw std::runtime_error("Missing delimiter after -d");
                 }
+            } else if (arg == "-header") {
+                opts.header_mode = HeaderMode::ForceOn;
+            } else if (arg == "-no-header") {
+                opts.header_mode = HeaderMode::ForceOff;
             } else {
                 throw std::runtime_error("Unknown option: " + arg);
             }
@@ -178,6 +191,19 @@ struct Options {
     void print() const {
         std::cout << "Command: " << (command == CommandType::Heatmap ? "heatmap" : "unknown") << std::endl;
         std::cout << "Delimiter: '" << delimiter << "'" << std::endl;
+        
+        std::cout << "Header mode: ";
+        switch (header_mode) {
+            case HeaderMode::Auto:
+                std::cout << "auto-detect" << std::endl;
+                break;
+            case HeaderMode::ForceOn:
+                std::cout << "forced on" << std::endl;
+                break;
+            case HeaderMode::ForceOff:
+                std::cout << "forced off" << std::endl;
+                break;
+        }
         
         std::cout << "X field: ";
         if (x_field.is_index) {

@@ -24,13 +24,17 @@ add_executable(tplt ${SOURCES} ${HEADERS})
 # Set include directories
 target_include_directories(tplt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-# Add test executable
+# Add test executables
 add_executable(heatmap_builder_test src/heatmap_builder_test.cpp ${HEADERS})
 target_include_directories(heatmap_builder_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+add_executable(data_reader_test src/data_reader_test.cpp ${HEADERS})
+target_include_directories(data_reader_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 # Add custom target to run all tests
 add_custom_target(test 
     COMMAND heatmap_builder_test
-    DEPENDS heatmap_builder_test
+    COMMAND data_reader_test
+    DEPENDS heatmap_builder_test data_reader_test
     COMMENT "Running tests..."
 )

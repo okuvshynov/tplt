@@ -52,6 +52,30 @@ int main(int argc, char* argv[]) {
             std::cerr << "No valid data points were read." << std::endl;
             return 1;
         }
+        
+        // Inform about header detection
+        if (reader.has_headers()) {
+            std::string headerMode;
+            switch (options.header_mode) {
+                case Options::HeaderMode::Auto:
+                    headerMode = "auto-detected";
+                    break;
+                case Options::HeaderMode::ForceOn:
+                    headerMode = "enabled";
+                    break;
+                default:
+                    headerMode = "detected";
+            }
+            
+            std::cout << "Header row " << headerMode << ": ";
+            const auto& headers = reader.get_headers();
+            for (size_t i = 0; i < headers.size(); ++i) {
+                std::cout << (i > 0 ? ", " : "") << headers[i];
+            }
+            std::cout << std::endl;
+        } else if (options.header_mode == Options::HeaderMode::ForceOn) {
+            std::cerr << "Warning: Header mode forced on, but no data was read" << std::endl;
+        }
 
         // Process data based on command
         if (options.command == CommandType::Heatmap) {
@@ -95,9 +119,15 @@ int main(int argc, char* argv[]) {
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         std::cerr << "Usage: tplt [options] command [fields]" << std::endl;
-        std::cerr << "Example: cat data.txt | tplt -d',' heatmap f1 f2" << std::endl;
-        std::cerr << "Example: cat data.txt | tplt heatmap f2 f4" << std::endl;
-        std::cerr << "Example: cat data.txt | tplt -d'|' heatmap f3 f5 avg(f7)" << std::endl;
+        std::cerr << "Options:" << std::endl;
+        std::cerr << "  -d<char>      Set delimiter character" << std::endl;
+        std::cerr << "  -header       Force first row to be treated as header" << std::endl;
+        std::cerr << "  -no-header    Force data to be treated as having no header" << std::endl;
+        std::cerr << "Examples:" << std::endl;
+        std::cerr << "  cat data.txt | tplt -d',' heatmap f1 f2" << std::endl;
+        std::cerr << "  cat data.txt | tplt heatmap f2 f4" << std::endl;
+        std::cerr << "  cat data.txt | tplt -d'|' heatmap f3 f5 avg(f7)" << std::endl;
+        std::cerr << "  cat data.csv | tplt -d',' -header heatmap xpos ypos avg(value)" << std::endl;
         return 1;
     }
     

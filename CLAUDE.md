@@ -9,6 +9,8 @@ TPLT is a C++ template library for generating heatmaps in the terminal. It provi
 - Render heatmaps with different intensity levels using Unicode characters
 - Support various aggregation functions (Sum, Average, Count)
 - Process data from stdin with configurable delimiters and column selection
+- Support CSV-like input with automatic header row detection and field name referencing
+- Allow explicit control over header detection with -header and -no-header options
 
 ## Building the Project
 
@@ -44,6 +46,7 @@ make test
 
 # Or run a specific test executable directly
 ./heatmap_builder_test
+./data_reader_test
 ```
 
 ## Usage Examples
@@ -60,6 +63,15 @@ cat data.txt | ./tplt heatmap f2 f4
 
 # Generate a heatmap with average aggregation of 7th column
 cat data.txt | ./tplt -d'|' heatmap f3 f5 avg(f7)
+
+# Generate a heatmap using header column names (auto-detection)
+cat data.csv | ./tplt -d',' heatmap x_position y_position avg(intensity)
+
+# Force using header row
+cat data.csv | ./tplt -d',' -header heatmap x_position y_position avg(intensity)
+
+# Force ignore header row
+cat data.csv | ./tplt -d',' -no-header heatmap f1 f2
 ```
 
 ## Code Architecture
@@ -84,6 +96,7 @@ The project is organized into multiple files:
 4. **src/data_reader.hpp**
    - Reads data from stdin according to specified options
    - Handles column selection and data parsing with configurable delimiters
+   - Automatically detects header rows and supports field name referencing
 
 5. **src/main.cpp**
    - Contains the application entry point
@@ -96,6 +109,9 @@ The project is organized into multiple files:
 
 7. **src/heatmap_builder_test.cpp**
    - Unit tests for the heatmap builder functionality
+
+8. **src/data_reader_test.cpp**
+   - Unit tests for header detection and field name lookup
 
 ## Core Components
 
