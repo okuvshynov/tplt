@@ -34,6 +34,19 @@ private:
 public:
     explicit DataReader(char delimiter = ' ') : delimiter_(delimiter) {}
     
+    // Remove surrounding quotes from a field value
+    std::string strip_quotes(const std::string& field) const {
+        if (field.length() < 2) return field;
+        
+        // Check for single or double quotes
+        if ((field.front() == '"' && field.back() == '"') ||
+            (field.front() == '\'' && field.back() == '\'')) {
+            return field.substr(1, field.length() - 2);
+        }
+        
+        return field;
+    }
+    
     // Split a line into fields based on delimiter
     DataRow split_line(const std::string& line) const {
         std::vector<std::string> fields;
@@ -46,6 +59,8 @@ public:
             field.erase(field.find_last_not_of(" \t\r\n") + 1);
             
             if (!field.empty()) {
+                // Strip quotes if present
+                field = strip_quotes(field);
                 fields.push_back(field);
             }
         }
@@ -97,7 +112,9 @@ public:
         
         for (const auto& field : row) {
             try {
-                std::stod(field);
+                // Try to parse as number after stripping quotes
+                std::string clean_field = strip_quotes(field);
+                std::stod(clean_field);
                 // If any field is convertible to a number, it's probably not a header
                 return false;
             } catch (const std::exception&) {
