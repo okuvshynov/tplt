@@ -10,7 +10,7 @@ TPLT is a C++ template library for generating heatmaps in the terminal. It provi
 - Support various aggregation functions (Sum, Average, Count)
 - Process data from stdin with configurable delimiters and column selection
 - Support CSV-like input with automatic header row detection and field name referencing
-- Allow explicit control over header detection with -header and -no-header options
+- Allow explicit control over header detection with --header and --no-header options
 
 ## Building the Project
 
@@ -68,10 +68,10 @@ cat data.txt | ./tplt -d'|' heatmap f3 f5 avg(f7)
 cat data.csv | ./tplt -d',' heatmap x_position y_position avg(intensity)
 
 # Force using header row
-cat data.csv | ./tplt -d',' -header heatmap x_position y_position avg(intensity)
+cat data.csv | ./tplt -d',' --header heatmap x_position y_position avg(intensity)
 
 # Force ignore header row
-cat data.csv | ./tplt -d',' -no-header heatmap f1 f2
+cat data.csv | ./tplt -d',' --no-header heatmap f1 f2
 ```
 
 ## Code Architecture

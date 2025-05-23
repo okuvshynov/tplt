@@ -121,13 +121,13 @@ int main(int argc, char* argv[]) {
         std::cerr << "Usage: tplt [options] command [fields]" << std::endl;
         std::cerr << "Options:" << std::endl;
         std::cerr << "  -d<char>      Set delimiter character" << std::endl;
-        std::cerr << "  -header       Force first row to be treated as header" << std::endl;
-        std::cerr << "  -no-header    Force data to be treated as having no header" << std::endl;
+        std::cerr << "  --header      Force first row to be treated as header" << std::endl;
+        std::cerr << "  --no-header   Force data to be treated as having no header" << std::endl;
         std::cerr << "Examples:" << std::endl;
         std::cerr << "  cat data.txt | tplt -d',' heatmap f1 f2" << std::endl;
         std::cerr << "  cat data.txt | tplt heatmap f2 f4" << std::endl;
         std::cerr << "  cat data.txt | tplt -d'|' heatmap f3 f5 avg(f7)" << std::endl;
-        std::cerr << "  cat data.csv | tplt -d',' -header heatmap xpos ypos avg(value)" << std::endl;
+        std::cerr << "  cat data.csv | tplt -d',' --header heatmap xpos ypos avg(value)" << std::endl;
         return 1;
     }
     

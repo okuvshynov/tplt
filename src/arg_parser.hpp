@@ -129,9 +129,9 @@ struct Options {
                 } else {
                     throw std::runtime_error("Missing delimiter after -d");
                 }
-            } else if (arg == "-header") {
+            } else if (arg == "--header") {
                 opts.header_mode = HeaderMode::ForceOn;
-            } else if (arg == "-no-header") {
+            } else if (arg == "--no-header") {
                 opts.header_mode = HeaderMode::ForceOff;
             } else {
                 throw std::runtime_error("Unknown option: " + arg);
