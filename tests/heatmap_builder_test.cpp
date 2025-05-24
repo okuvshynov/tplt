@@ -1,5 +1,5 @@
 #include "test_framework.hpp"
-#include "heatmap_builder.hpp"
+#include "../src/heatmap_builder.hpp"
 #include <tuple>
 #include <vector>
 #include <iostream>

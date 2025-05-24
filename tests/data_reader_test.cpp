@@ -1,6 +1,6 @@
 #include "test_framework.hpp"
-#include "data_reader.hpp"
-#include "arg_parser.hpp"
+#include "../src/data_reader.hpp"
+#include "../src/arg_parser.hpp"
 #include <sstream>
 
 using namespace tplt;
